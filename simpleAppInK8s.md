@@ -79,3 +79,34 @@ spec:
         - containerPort: 5000
 ```
 
+enter all that... then 
+```bash
+docker build -t flask-hello .
+docker run -p 5000:5000 flask-hello
+```
+and you should be able to connect a web browser as you've mapped the port to the outside
+
+
+then spin up a cluster
+
+```
+kind create cluster
+```
+
+The gotcha here is that the kind cluster is runing its own container registry, so you'll need to copy 
+your docker image into the cluster
+```bash
+kind load docker-image flask-hello:latest
+```
+
+then deploy the app into it
+
+```
+kubectl cluster-info
+kubectl apply -f deploymemnt.yaml
+```
+
+then you just need to get the port out of the cluster - since we are playing locally
+```bash
+kubectl port-forward service/flask-hello 6000:6000
+```

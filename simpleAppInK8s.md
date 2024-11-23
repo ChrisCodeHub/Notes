@@ -110,3 +110,63 @@ then you just need to get the port out of the cluster - since we are playing loc
 ```bash
 kubectl port-forward service/flask-hello 6000:6000
 ```
+
+
+OK - lets get this into Helm. For a simple application like this the benefits are small, but
+as the number of pods and containers grows, or the deployment needs to be localised (ie variables per environment)
+then helm and its templating support are useful. Starting small, convert this to helm
+
+Helm will create a blank directory tree
+```bash
+helm create simple-app-helm
+```
+that created 
+
+```
+simple-app-helm/
+├── charts
+├── Chart.yaml
+├── templates
+│   ├── deployment.yaml
+│   ├── _helpers.tpl
+│   ├── hpa.yaml
+│   ├── ingress.yaml
+│   ├── NOTES.txt
+│   ├── serviceaccount.yaml
+│   ├── service.yaml
+│   └── tests
+│       └── test-connection.yaml
+└── values.yaml
+```
+
+edit the values.yaml 
+```
+# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+image:
+  repository: flask-hello
+  # This sets the pull policy for images.
+  pullPolicy: Never
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: latest
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+
+service:
+  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: NodePort
+  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+  port: 5000  
+```
+
+```
+helm install quick-test --debug ./simple-app-helm
+helm list --all-namespaces
+```
+
+
+once done 
+```
+helm uninstall quick-test
+```

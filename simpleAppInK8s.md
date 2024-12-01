@@ -25,7 +25,7 @@ EXPOSE 5000
 CMD ["python", "/app/main.py"]
 ```
 
-requirements.txt is just flash
+requirements.txt is just flask
 ```
 Flask
 ```
@@ -96,8 +96,12 @@ kind create cluster
 The gotcha here is that the kind cluster is runing its own container registry, so you'll need to copy 
 your docker image into the cluster
 ```bash
-kind load docker-image flask-hello:latest
+kind load docker-image flask-hello:latest     # transfer docker image into the KIND cluster
+docker exec -it my-node-name crictl images    # to see what is loaded
 ```
+
+
+
 
 then deploy the app into it
 
